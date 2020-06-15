@@ -1,4 +1,4 @@
-## MERN App
+## React-Next App
 
 First, run the development server:
 
