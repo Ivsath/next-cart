@@ -32,3 +32,4 @@ yarn-error.log*
 dist
 # next.config.*
 # now.json
+next.config.js
