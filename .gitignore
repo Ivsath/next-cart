@@ -30,6 +30,5 @@ yarn-error.log*
 .env.production.local
 
 dist
-# next.config.*
-# now.json
-next.config.js
+next.config.*
+now.json
