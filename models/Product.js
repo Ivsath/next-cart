@@ -27,6 +27,6 @@ const ProductSchema = new mongoose.Schema({
   },
 });
 
-// Check due to serverless setup
-export default mongoose.model.Product ||
+// Check so we dont try to overwrite the model once compiled
+export default mongoose.models.Product ||
   mongoose.model("Product", ProductSchema);
