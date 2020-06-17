@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import axios from "axios";
+import ProductList from "../components/Index/ProductList";
 
 function Home({ products }) {
-  console.log(products);
-
-  return <>home</>;
+  return <ProductList products={products} />;
 }
 
 Home.getInitialProps = async (ctx) => {
