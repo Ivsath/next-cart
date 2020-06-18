@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -11,6 +11,7 @@ import {
 } from "semantic-ui-react";
 import axios from "axios";
 import baseUrl from "../utils/baseUrl";
+import catchErrors from "../utils/catchErrors";
 
 const INITIAL_PRODUCT = {
   name: "",
@@ -24,14 +25,25 @@ function CreateProduct() {
   const [mediaPreview, setMediaPreview] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const isProduct = Object.values(product).every((el) => Boolean(el));
+    isProduct ? setDisabled(false) : setDisabled(true);
+  }, [product]);
 
   const handleImageUpload = async () => {
-    const data = new FormData();
-    data.append("file", product.media);
-    data.append("upload_preset", "reserve");
-    const response = await axios.post(process.env.CLOUDINARY_URL, data);
-    const mediaUrl = response.data.url;
-    return mediaUrl;
+    try {
+      const data = new FormData();
+      data.append("file", product.media);
+      data.append("upload_preset", "reserve");
+      const response = await axios.post(process.env.CLOUDINARY_URL, data);
+      const mediaUrl = response.data.url;
+      return mediaUrl;
+    } catch (error) {
+      catchErrors(error, setError);
+    }
   };
 
   const handleChange = (event) => {
@@ -45,16 +57,20 @@ function CreateProduct() {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    const mediaUrl = await handleImageUpload();
-    const url = `${baseUrl}/api/product`;
-    const payload = { ...product, mediaUrl };
-    const response = await axios.post(url, payload);
-    setLoading(false);
-    console.log({ response });
-    setProduct(INITIAL_PRODUCT);
-    setSuccess(true);
+    try {
+      event.preventDefault();
+      setLoading(true);
+      const mediaUrl = await handleImageUpload();
+      const url = `${baseUrl}/api/product`;
+      const payload = { ...product, mediaUrl };
+      await axios.post(url, payload);
+      setProduct(INITIAL_PRODUCT);
+      setSuccess(true);
+    } catch (error) {
+      catchErrors(error, setError);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,15 +79,22 @@ function CreateProduct() {
         <Icon name="add" color="orange" />
         Create New Product
       </Header>
-      <Form loading={loading} success={success} onSubmit={handleSubmit}>
+      <Form
+        loading={loading}
+        error={Boolean(error)}
+        success={success}
+        onSubmit={handleSubmit}
+      >
         <Message
           success
           icon="check"
-          header="success!"
+          header="Success!"
           content="Your product has been posted"
         />
+        <Message error header="Oops!" content={error} />
         <Form.Group widths="equal">
           <Form.Field
+            required
             control={Input}
             name="name"
             label="Name"
@@ -80,6 +103,7 @@ function CreateProduct() {
             onChange={handleChange}
           />
           <Form.Field
+            required
             control={Input}
             name="price"
             label="Price"
@@ -91,6 +115,7 @@ function CreateProduct() {
             onChange={handleChange}
           />
           <Form.Field
+            required
             control={Input}
             name="media"
             label="Media"
@@ -102,6 +127,7 @@ function CreateProduct() {
         </Form.Group>
         <Image src={mediaPreview} rounded centered size="small" />
         <Form.Field
+          required
           control={TextArea}
           name="description"
           label="Description"
@@ -111,7 +137,7 @@ function CreateProduct() {
         />
         <Form.Field
           control={Button}
-          disabled={loading}
+          disabled={disabled || loading}
           color="blue"
           icon="pencil alternate"
           content="submit"
