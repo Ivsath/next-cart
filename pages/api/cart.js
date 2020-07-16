@@ -5,7 +5,9 @@ import connectDb from "../../utils/connectDb";
 
 connectDb();
 
-export default async (req, res) => {
+const { ObjectId } = mongoose.Types;
+
+const handleGetRequest = async (req, res) => {
   if (!("authorization" in req.headers)) {
     return res.status(401).send("No authorization token");
   }
@@ -24,5 +26,60 @@ export default async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(403).send("Please login again");
+  }
+};
+
+const handlePutRequest = async (req, res) => {
+  if (!("authorization" in req.headers)) {
+    return res.status(401).send("No authorization token");
+  }
+
+  const { quantity, productId } = req.body;
+
+  try {
+    const { userId } = jwt.verify(
+      req.headers.authorization,
+      process.env.JWT_SECRET
+    );
+    // Get user cart based on userId
+    const cart = await Cart.findOne({ user: userId });
+    // Check if product already exists in cart
+    const productExists = cart.products.some((doc) =>
+      ObjectId(productId).equals(doc.product)
+    );
+    // If so, increment quantity (by number provided by the request)
+    if (productExists) {
+      await Cart.findOneAndUpdate(
+        { _id: cart._id, "products.product": productId },
+        // The $ makes reference to the element to update in the array
+        { $inc: { "products.$.quantity": quantity } }
+      );
+    } else {
+      // If not, add new product with given quantity
+      const newProduct = { quantity, product: productId };
+      await Cart.findOneAndUpdate(
+        { _id: cart._id },
+        { $addToSet: { products: newProduct } }
+      );
+    }
+
+    res.status(200).send("Cart updated");
+  } catch (error) {
+    console.error(error);
+    res.status(403).send("Please login again");
+  }
+};
+
+export default async (req, res) => {
+  switch (req.method) {
+    case "GET":
+      await handleGetRequest(req, res);
+      break;
+    case "PUT":
+      await handlePutRequest(req, res);
+      break;
+    default:
+      res.status(405).send(`Method ${req.method} not allowed`);
+      break;
   }
 };

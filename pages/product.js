@@ -7,7 +7,7 @@ function Product({ product, user }) {
   console.log(product);
   return (
     <>
-      <ProductSummary {...product} />
+      <ProductSummary user={user} {...product} />
       <ProductAttributes user={user} {...product} />
     </>
   );
