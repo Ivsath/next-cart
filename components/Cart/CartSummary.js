@@ -25,10 +25,11 @@ function CartSummary({ products, handleCheckout, success }) {
           name="React Reserve"
           amount={stripeAmount}
           image={products.length > 0 ? products[0].product.mediaUrl : ""}
-          currency="usd"
+          currency="USD"
           shippingAddress={true}
           billingAddress={true}
           zipCode={true}
+          stripeKey="pk_test_51H70IDB0NC0Qk6WpF2NNbuJfo4VKNk7ARdt7QqfHYFO9WpkK1hWm2zIXEc3NPOOtrFTwfI0pFO8MQePNCXgacKM700TU4duVwG"
           token={handleCheckout}
           triggerEvent="onClick"
         >
