@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
+import Product from "../../models/Product";
 import Cart from "../../models/Cart";
 import Order from "../../models/Order";
 import calculateCartTotal from "../../utils/calculateCartTotal";
@@ -20,7 +21,7 @@ export default async (req, res) => {
     // Find cart based on user id, populate it
     const cart = await Cart.findOne({ user: userId }).populate({
       path: "products.product",
-      model: "Product",
+      model: Product,
     });
     // Calculate cart totals again from cart products
     const { cartTotal, stripeTotal } = calculateCartTotal(cart.products);
