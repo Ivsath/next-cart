@@ -4,6 +4,7 @@ import axios from "axios";
 import cookie from "js-cookie";
 
 import baseUrl from "../../utils/baseUrl";
+import formatDate from "../../utils/formatDate";
 
 function AccountPermissions() {
   const [users, setUsers] = useState([]);
@@ -81,8 +82,8 @@ function UserPermission({ user }) {
       </Table.Cell>
       <Table.Cell>{user.name}</Table.Cell>
       <Table.Cell>{user.email}</Table.Cell>
-      <Table.Cell>{user.createdAt}</Table.Cell>
-      <Table.Cell>{user.updatedAt}</Table.Cell>
+      <Table.Cell>{formatDate(user.createdAt)}</Table.Cell>
+      <Table.Cell>{formatDate(user.updatedAt)}</Table.Cell>
       <Table.Cell>{admin ? "admin" : "user"}</Table.Cell>
     </TableRow>
   );
