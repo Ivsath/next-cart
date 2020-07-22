@@ -9,6 +9,7 @@ import {
 } from "semantic-ui-react";
 import Link from "next/link";
 import axios from "axios";
+
 import catchErrors from "../utils/catchErrors";
 import baseUrl from "../utils/baseUrl";
 import { handleLogin } from "../utils/auth";

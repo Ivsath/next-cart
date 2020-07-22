@@ -10,6 +10,7 @@ import {
   Icon,
 } from "semantic-ui-react";
 import axios from "axios";
+
 import baseUrl from "../utils/baseUrl";
 import catchErrors from "../utils/catchErrors";
 

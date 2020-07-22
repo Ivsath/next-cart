@@ -1,10 +1,11 @@
 import App from "next/app";
-import Layout from "../components/_App/Layout";
-import { parseCookies, destroyCookie } from "nookies";
-import { redirectUser } from "../utils/auth";
-import baseUrl from "../utils/baseUrl";
 import axios from "axios";
 import Router from "next/router";
+import { parseCookies, destroyCookie } from "nookies";
+
+import Layout from "../components/_App/Layout";
+import { redirectUser } from "../utils/auth";
+import baseUrl from "../utils/baseUrl";
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
