@@ -13,6 +13,10 @@ connectDb();
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async (req, res) => {
+  if (!("authorization" in req.headers)) {
+    return res.status(401).send("No authorization token");
+  }
+
   const { paymentData } = req.body;
 
   try {
