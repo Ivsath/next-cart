@@ -22,7 +22,7 @@ function CartSummary({ products, handleCheckout, success }) {
       <Segment clearing size="large">
         <strong>Sub total:</strong> ${cartAmount}
         <StripeCheckout
-          name="React Reserve"
+          name="Next Cart"
           amount={stripeAmount}
           image={products.length > 0 ? products[0].product.mediaUrl : ""}
           currency="USD"
